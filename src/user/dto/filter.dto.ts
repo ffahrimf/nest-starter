@@ -37,4 +37,10 @@ export class FilterDto {
     description: 'This is a required property',
   })
   email: string;
+
+  @ApiProperty({
+    type: Number,
+    description: 'This is a required property',
+  })
+  role_id: number;
 }

@@ -45,6 +45,9 @@ export class UserService {
       if (body.email) {
         qb.andWhere({ email: { $like: `%${body.email}%` } });
       }
+      if (body.role_id) {
+        qb.andWhere({ role: body.role_id });
+      }
       qb.andWhere({ deletedAt: null });
 
       qb.orderBy({ createdAt: sortOrder })
