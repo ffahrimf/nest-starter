@@ -27,20 +27,14 @@ export class FilterDto {
   id: number;
 
   @ApiProperty({
-    type: Number,
-    description: 'This is a required property',
-  })  
-  company_id: number;
-
-  @ApiProperty({
     type: String,
     description: 'This is a required property',
-  })  
-  username:string;
+  })
+  username: string;
 
   @ApiProperty({
     type: String,
     description: 'This is a required property',
   })
-  email:string;
+  email: string;
 }

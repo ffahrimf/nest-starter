@@ -21,10 +21,10 @@ export class SeederService {
         name: 'SUPERADMIN',
       },
       {
-        name: 'ADMIN',
+        name: 'MENTOR',
       },
       {
-        name: 'KARYAWAN',
+        name: 'STUDENT',
       },
     ];
 
@@ -48,7 +48,7 @@ export class SeederService {
       const userData = {
         name: 'superadmin',
         username: 'superadmin',
-        email: 'superadmin@mail.com',
+        email: 'superadmin@gmail.com',
         role: 1,
         password: password,
       };

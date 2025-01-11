@@ -34,10 +34,7 @@ export class UserService {
       const sortOrder = body.sort || 'asc';
       const qb = this.UserRepository.createQueryBuilder('b');
 
-      qb.leftJoinAndSelect('b.company', 'company').leftJoinAndSelect(
-        'b.role',
-        'role',
-      );
+      qb.leftJoinAndSelect('b.role', 'role');
 
       if (body.id) {
         qb.andWhere({ id: body.id });
