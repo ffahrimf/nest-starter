@@ -6,18 +6,9 @@ import { SeederService } from './seeder/seeder.service';
 import { UserModule } from './user/user.module';
 import { RoleModule } from './role/role.module';
 import { AuthModule } from './auth/auth.module';
-import { ProvinceModule } from './province/province.module';
-import { CityModule } from './city/city.module';
 
 @Module({
-  imports: [
-    MikroOrmModule.forRoot(),
-    UserModule,
-    RoleModule,
-    AuthModule,
-    ProvinceModule,
-    CityModule,
-  ],
+  imports: [MikroOrmModule.forRoot(), UserModule, RoleModule, AuthModule],
   controllers: [AppController],
   providers: [AppService, SeederService],
 })
