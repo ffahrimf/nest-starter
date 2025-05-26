@@ -4,8 +4,6 @@ import { User } from 'src/user/user.entity';
 import * as bcrypt from 'bcrypt';
 import * as dotenv from 'dotenv';
 import { Role } from 'src/role/role.entity';
-import { Province } from 'src/province/province.entity';
-import { City } from 'src/city/city.entity';
 
 @Injectable()
 export class SeederService {
@@ -20,12 +18,6 @@ export class SeederService {
       {
         name: 'SUPERADMIN',
       },
-      {
-        name: 'MENTOR',
-      },
-      {
-        name: 'STUDENT',
-      },
     ];
 
     for (const roleData of roles) {
@@ -35,12 +27,6 @@ export class SeederService {
         await em.persistAndFlush(role);
       }
     }
-
-    const province = new Province('Jawa Barat', 1, 1);
-    await em.persistAndFlush(province);
-
-    const city = new City(province, 'Ciamis', 1, 1);
-    await em.persistAndFlush(city);
 
     const existingUser = await em.findOne(User, { username: 'superadmin' });
     if (!existingUser) {
