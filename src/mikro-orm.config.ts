@@ -11,11 +11,17 @@ export default defineConfig({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   dbName: process.env.DB_NAME,
+  port: parseInt(process.env.DB_PORT, 10),
+
+  driverOptions: {
+    connection: { ssl: { rejectUnauthorized: false } },
+  },
+
   entities: ['dist/**/*.entity.js'],
   entitiesTs: ['src/**/*.entity.ts'],
-  debug: true,
+  debug: process.env.NODE_ENV !== 'production',
   metadataProvider: TsMorphMetadataProvider,
-  // @ts-expect-error nestjs adapter option
+  // @ts-expect-error
   registerRequestContext: false,
   extensions: [Migrator, EntityGenerator, SeedManager],
   migrations: {
