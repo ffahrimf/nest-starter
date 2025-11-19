@@ -29,21 +29,22 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message = exception.message || 'Internal server error';
     }
 
-    response.status(status || HttpStatus.INTERNAL_SERVER_ERROR).json({
-      statusCode: status,
-      message: message,
-      errors: errors,
-      timestamp: new Date().toISOString(),
-      constructor: exception.constructor.name,
-      path: request.url,
-    });
+    response
+      .status(status || HttpStatus.INTERNAL_SERVER_ERROR)
+      .json({
+        statusCode: status,
+        message: message,
+        errors: errors,
+        timestamp: new Date().toISOString(),
+        constructor: exception.constructor.name,
+        path: request.url,
+      });
   }
 
   private buildError(errors: any[]) {
     const result = {};
     errors.forEach((err) => {
       const prop = err.property;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       Object.entries(err.constraints).forEach(([key, value]) => {
         if (!result[prop]) {
           result[prop] = [];

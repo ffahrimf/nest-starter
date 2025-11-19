@@ -1,46 +1,36 @@
-import { IsNotEmpty, Matches } from 'class-validator';
+import { IsNotEmpty, IsOptional, Matches } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class FilterDto {
-  @ApiProperty({
-    type: Number,
-    description: 'This is a required property',
-  })
+  @ApiProperty({ type: Number, description: 'This is a required property' })
+  @IsOptional()
   page: number = 1;
 
-  @ApiProperty({
-    type: Number,
-    description: 'This is a required property',
-  })
+  @ApiProperty({ type: Number, description: 'This is a required property' })
+  @IsOptional()
   limit: number = 10;
 
-  @ApiProperty({
-    type: Number,
-    description: 'This is a required property',
-  })
+  @ApiProperty({ type: String, description: 'This is a required property' })
+  @IsOptional()
   sort: string = 'ASC';
 
-  @ApiProperty({
-    type: Number,
-    description: 'This is a required property',
-  })
+  @ApiProperty({ type: Number, description: 'This is a required property' })
+  @IsOptional()
   id: number;
 
-  @ApiProperty({
-    type: String,
-    description: 'This is a required property',
-  })
+  @ApiProperty({ type: String, description: 'This is a required property' })
+  @IsOptional()
+  name: string;
+
+  @ApiProperty({ type: String, description: 'This is a required property' })
+  @IsOptional()
   username: string;
 
-  @ApiProperty({
-    type: String,
-    description: 'This is a required property',
-  })
+  @ApiProperty({ type: String, description: 'This is a required property' })
+  @IsOptional()
   email: string;
 
-  @ApiProperty({
-    type: Number,
-    description: 'This is a required property',
-  })
+  @ApiProperty({ type: Number, description: 'This is a required property' })
+  @IsOptional()
   role_id: number;
 }

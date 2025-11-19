@@ -13,9 +13,7 @@ export default defineConfig({
   dbName: process.env.DB_NAME,
   port: parseInt(process.env.DB_PORT, 10),
 
-  driverOptions: {
-    connection: { ssl: { rejectUnauthorized: false } },
-  },
+  driverOptions: { connection: { ssl: { rejectUnauthorized: false } } },
 
   entities: ['dist/**/*.entity.js'],
   entitiesTs: ['src/**/*.entity.ts'],
@@ -24,7 +22,5 @@ export default defineConfig({
   // @ts-expect-error
   registerRequestContext: false,
   extensions: [Migrator, EntityGenerator, SeedManager],
-  migrations: {
-    transactional: true,
-  },
+  migrations: { transactional: true },
 });

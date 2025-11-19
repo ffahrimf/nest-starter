@@ -8,16 +8,17 @@ import { jwtConfig } from 'src/jwt/jwt.config';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { User } from 'src/user/user.entity';
 import { Role } from 'src/role/role.entity';
-
+import { Superadmin } from 'src/superadmin/superadmin.entity';
 import { PassportModule } from '@nestjs/passport';
+import { UploadService } from 'src/upload/upload.service';
 
 @Module({
   imports: [
-    MikroOrmModule.forFeature({ entities: [User, Role] }),
+    MikroOrmModule.forFeature({ entities: [User, Role, Superadmin] }),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register(jwtConfig),
   ],
   controllers: [UserController],
-  providers: [UserService, Response, JwtUtilService],
+  providers: [UserService, Response, JwtUtilService, UploadService],
 })
 export class UserModule {}

@@ -7,16 +7,14 @@ import { join } from 'path';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         transport: {
           host: configService.get<string>('MAIL_HOST'),
           port: configService.get<number>('MAIL_PORT'),
-          secure: false, // false untuk koneksi tls
+          secure: false,
           auth: {
             user: configService.get<string>('MAIL_USERNAME'),
             pass: configService.get<string>('MAIL_PASSWORD'),
@@ -28,17 +26,15 @@ import { join } from 'path';
           )}" <${configService.get<string>('MAIL_FROM_ADDRESS')}>`,
         },
         template: {
-          dir: join(process.cwd(), 'templates'), // Lokasi folder template
+          dir: join(process.cwd(), 'templates'), // Templates folder location
           adapter: new HandlebarsAdapter(),
-          options: {
-            strict: true,
-          },
+          options: { strict: true },
         },
       }),
       inject: [ConfigService],
     }),
   ],
   providers: [MailService],
-  exports: [MailService], // Export MailService biar bisa dipake di module lain
+  exports: [MailService],
 })
 export class MailModule {}

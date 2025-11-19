@@ -1,44 +1,27 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import * as Minio from 'minio';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class UploadService {
-  private readonly minioClient: Minio.Client;
-  private readonly bucketName: string;
+  private baseFolder: string = path.join(__dirname, '..', '..', 'uploads');
+  private baseUrl: string = process.env.APP_BASE_URL || 'http://localhost:5000';
+
   constructor() {
-    this.minioClient = new Minio.Client({
-      endPoint: 'nos.wjv-1.neo.id',
-      useSSL: false,
-      secretKey: 'FMZHV8iLX8lFH80NaYJdEAe5ipVqQrFnzJL1Ml45',
-      accessKey: '45cf5d421a015b63d5a5',
-    });
-    this.bucketName = 'nest-typescript';
+    if (!fs.existsSync(this.baseFolder)) {
+      fs.mkdirSync(this.baseFolder, { recursive: true });
+    }
   }
 
   async getListObjects(prefix: string): Promise<any[]> {
-    const objects: any[] = [];
-
-    return new Promise((resolve, reject) => {
-      const stream = this.minioClient.listObjects(
-        this.bucketName,
-        prefix,
-        true,
-      );
-
-      stream.on('data', (obj) => {
-        objects.push(obj);
-      });
-
-      stream.on('end', () => {
-        resolve(objects);
-      });
-
-      stream.on('error', (err) => {
-        console.error('Error listing objects:', err);
-        reject(err);
-      });
-    });
+    const folderPath = path.join(this.baseFolder, prefix);
+    try {
+      const files = await fs.promises.readdir(folderPath);
+      return files;
+    } catch (error) {
+      return [];
+    }
   }
 
   async saveFiles(
@@ -53,30 +36,28 @@ export class UploadService {
   }> {
     const uniqueFilename: string = `${uuidv4()}.${this.getMime(file?.originalname)}`;
     const subFolder: string = moduleID > 0 ? `/${moduleID}` : '';
-    const folderPath: string = `${parentFolder}${subFolder}`;
-    const imageUploadPath: string = `${folderPath}/${uniqueFilename}`;
+    const folderPath = path.join(this.baseFolder, parentFolder, subFolder);
 
-    await this.minioClient.putObject(
-      this.bucketName,
-      imageUploadPath,
-      file.buffer,
-      file.size,
-      {
-        'Content-Type': file.mimetype,
-      },
-    );
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath, { recursive: true });
+    }
 
-    const filePath = `https://${process.env.S3_ENDPOINT}/${this.bucketName}/${imageUploadPath}`;
+    const filePath = path.join(folderPath, uniqueFilename);
 
-    this.setBucketPolicy();
+    try {
+      await fs.promises.writeFile(filePath, new Uint8Array(file.buffer));
+      const publicUrl = `${this.baseUrl}/uploads/${parentFolder}${subFolder}/${uniqueFilename}`;
 
-    // kenapaada thumbnail, karena awalnya memang ada, ternyata server tidak suport karena version linuxnya dibawah standar.
-    return {
-      file: uniqueFilename,
-      fileDecode: filePath,
-      thumbnail: '',
-      thumbnailDecode: '',
-    };
+      return {
+        file: uniqueFilename,
+        fileDecode: publicUrl,
+        thumbnail: '',
+        thumbnailDecode: '',
+      };
+    } catch (error) {
+      console.error('Error saving file:', error);
+      throw new InternalServerErrorException('Failed to save file');
+    }
   }
 
   getMime(filename: string): string {
@@ -84,48 +65,7 @@ export class UploadService {
   }
 
   async setBucketPolicy(): Promise<void> {
-    try {
-      const bucketPolicy = {
-        Version: '2012-10-17',
-        Statement: [
-          {
-            Action: ['s3:GetBucketLocation'],
-            Effect: 'Allow',
-            Principal: {
-              AWS: ['*'],
-            },
-            Resource: [`arn:aws:s3:::${this.bucketName}`],
-            Sid: '',
-          },
-          {
-            Action: ['s3:ListBucket'],
-            Effect: 'Allow',
-            Principal: {
-              AWS: ['*'],
-            },
-            Resource: [`arn:aws:s3:::${this.bucketName}`],
-            Sid: '',
-          },
-          {
-            Action: ['s3:GetObject'],
-            Effect: 'Allow',
-            Principal: {
-              AWS: ['*'],
-            },
-            Resource: [`arn:aws:s3:::${this.bucketName}/*`],
-            Sid: '',
-          },
-        ],
-      };
-      await this.minioClient.setBucketPolicy(
-        this.bucketName,
-        JSON.stringify(bucketPolicy),
-      );
-      console.log(`Policy set for bucket ${this.bucketName}`);
-    } catch (error) {
-      console.error('Error setting bucket policy:', error);
-      throw new InternalServerErrorException('Failed to set bucket policy');
-    }
+    return;
   }
 
   async deleteFile(
@@ -133,16 +73,24 @@ export class UploadService {
     moduleID: string | number,
     parentFolder: string,
   ): Promise<void> {
-    const filePath = `${parentFolder}/${moduleID}/${filename}`;
-    console.log(filePath);
-
-    await this.minioClient.removeObject(this.bucketName, filePath);
+    const filePath = path.join(
+      this.baseFolder,
+      parentFolder,
+      String(moduleID),
+      filename,
+    );
+    try {
+      await fs.promises.unlink(filePath);
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      throw new InternalServerErrorException('Failed to delete file');
+    }
   }
 
   linkGenerator(filename: string, folder: string): string {
     if (!filename) {
       return '';
     }
-    return `https://${process.env.S3_ENDPOINT}/${this.bucketName}/${folder}/${filename}`;
+    return `${this.baseUrl}/uploads/${folder}/${filename}`;
   }
 }

@@ -59,7 +59,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const result = {};
     errors.forEach((err) => {
       const prop = err.property;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       Object.entries(err.constraints).forEach(([key, value]) => {
         if (!result[prop]) {
           result[prop] = [];

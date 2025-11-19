@@ -8,7 +8,7 @@ export class CreateUserDto {
   })
   @IsNotEmpty()
   @Matches(/^[a-zA-Z0-9_]+$/, {
-    message: 'Username hanya boleh menggunakan huruf, angka, dan simbol _',
+    message: 'Username hanya boleh menggunakan huruf, angka, dan simbol "_"',
   })
   @MinLength(8)
   username!: string;
@@ -26,7 +26,7 @@ export class CreateUserDto {
   })
   @IsNotEmpty()
   @Matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, {
-    message: 'Email not valid. Example tes@gmail.com',
+    message: 'Email tidak valid. Contoh: budi@gmail.com',
   })
   email!: string;
 
@@ -36,9 +36,11 @@ export class CreateUserDto {
   })
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]+$/, {
     message:
-      'Password must be consist of at least, 1 lowercase, 1 uppercase letter or underscore',
+      'Password harus mengandung minimal satu huruf besar, satu huruf kecil, dan satu angka.',
   })
-  @MinLength(8)
+  @MinLength(8, {
+    message: 'Password harus minimal 8 karakter.',
+  })
   @IsNotEmpty()
   password!: string;
 
