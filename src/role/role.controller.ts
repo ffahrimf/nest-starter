@@ -42,7 +42,7 @@ export class RoleController {
     const userId = this.jwtUtilService.getUserIdFromToken(token);
 
     const result = await this.roleService.create(dto, userId);
-    return this.response.success(result);
+    return this.response.created(result);
   }
 
   @Post('delete/:id')

@@ -41,6 +41,6 @@ export class ProvinceController {
     const userId = this.jwtUtilService.getUserIdFromToken(token);
 
     const result = await this.provinceService.create(dto, userId);
-    return this.response.success(result);
+    return this.response.created(result);
   }
 }

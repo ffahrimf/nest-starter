@@ -41,6 +41,6 @@ export class CityController {
     const userId = this.jwtUtilService.getUserIdFromToken(token);
 
     const result = await this.cityService.create(dto, userId);
-    return this.response.success(result);
+    return this.response.created(result);
   }
 }

@@ -18,7 +18,7 @@ export class AuthController {
   @Post('login')
   async login(@Body() loginDto: LoginDto): Promise<any> {
     const result = await this.authService.login(loginDto);
-    return this.response.success(result, 'Berhasil login');
+    return this.response.success(result, 'Login Successfully');
   }
 
   @Post('refresh')
@@ -26,6 +26,6 @@ export class AuthController {
     const result = await this.authService.refreshAccessToken(
       refreshDto.refresh_token,
     );
-    return this.response.success(result, 'Berhasil Refresh Token');
+    return this.response.success(result, 'Successfully Refresh Token');
   }
 }

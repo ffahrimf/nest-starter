@@ -52,7 +52,7 @@ export class SuperadminController {
     }
 
     const result = await this.superadminService.create(dto, userId);
-    return this.responseHelper.success(result);
+    return this.responseHelper.created(result);
   }
 
   @Get()

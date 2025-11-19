@@ -3,11 +3,14 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class Response {
   success(data: any, message: string = 'Success'): ApiResponse {
-    return {
-      success: true,
-      message,
-      data,
-    };
+    return { success: true, message, data };
+  }
+
+  created(
+    data: any,
+    message: string = 'Data successfully created',
+  ): ApiResponse {
+    return { success: true, message, data };
   }
 }
 
